@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест: Движение тела, брошенного под углом к горизонту</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      color: #0f172a;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    p.subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 24px;
+    }
+
+    .user-info {
+      margin-bottom: 24px;
+      padding: 16px;
+      background: #f1f5f9;
+      border-radius: 8px;
+    }
+
+    .user-info label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .user-info input {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .question-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background-color: #fff;
+    }
+
+    .question-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-label {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .option-label:hover {
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    .option-label input {
+      margin-right: 12px;
+    }
+
+    button.submit-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 20px;
+    }
+
+    button.submit-btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    button.submit-btn:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    #result {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      display: none;
+    }
+
+    .success {
+      background-color: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    .error {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Тест по материалам урока</h1>
+  <p class="subtitle">Исследование движения тела, брошенного под углом к горизонту</p>
+
+  <form id="quizForm">
+    <div class="user-info">
+      <label for="userName">Ваше ФИО / Имя:</label>
+      <input type="text" id="userName" name="userName" placeholder="Иванов Иван" required>
+    </div>
+
+    <div id="questionsContainer"></div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">Завершить тест и отправить результаты</button>
+  </form>
+
+  <div id="result"></div>
+</div>
+
+<script>
+  // URL веб-приложения Google Apps Script
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwssck-ds2ZW45IbUNG4flsJi7SM2dpGaykxl0svukkgEnHRYtrpeDtTIHMGXHsWlhW/exec";
+
+  const questions = [
+    {
+      q: "1. Какими уравнениями описывается движение тела по горизонтальной оси OX (без учета сопротивления воздуха)?",
+      options: [
+        "Равноускоренным с ускорением g",
+        "Равномерным со скоростью v_x = v_0 * cos(α)",
+        "Равнозамедленным со скоростью v_x = v_0 * sin(α)",
+        "Движение по оси OX отсутствует"
+      ],
+      correct: 1
+    },
+    {
+      q: "2. Как изменяется горизонтальная составляющая скорости v_x в процессе полета тела?",
+      options: [
+        "Увеличивается с течением времени",
+        "Уменьшается до нуля в высшей точке",
+        "Остается постоянной на всем протяжении полета",
+        "Меняет направление на противоположное"
+      ],
+      correct: 2
+    },
+    {
+      q: "3. Под каким углом к горизонту достигается максимальная дальность полета при броске с плоской поверхности (h = 0 м)?",
+      options: [
+        "30°",
+        "45°",
+        "60°",
+        "90°"
+      ],
+      correct: 1
+    },
+    {
+      q: "4. Как наличие начальной высоты (h > 0, например, стрельба с горы 70 м) влияет на угол максимальной дальности α_opt?",
+      options: [
+        "Угол увеличивается (α_opt > 45°)",
+        "Угол уменьшается (α_opt < 45°)",
+        "Угол не меняется и остается равным 45°",
+        "Дальность перестает зависеть от угла"
+      ],
+      correct: 1
+    },
+    {
+      q: "5. Как зависит дальность полета снаряда от начальной скорости v_0 при фиксированном угле броска?",
+      options: [
+        "Обратно пропорционально",
+        "Линейно",
+        "Близко к квадратичной зависимости",
+        "Дальность не зависит от начальной скорости"
+      ],
+      correct: 2
+    },
+    {
+      q: "6. Чему равна вертикальная составляющая скорости v_y в высшей точке траектории?",
+      options: [
+        "v_0",
+        "v_0 * cos(α)",
+        "0 м/с",
+        "g * t"
+      ],
+      correct: 2
+    },
+    {
+      q: "7. Почему конечная скорость падения снаряда v при стрельбе с высоты h = 70 м превышает начальную скорость v_0?",
+      options: [
+        "Из-за выталкивающей силы воздуха",
+        "За счет перехода потенциальной энергии гравитационного поля в кинетическую",
+        "Из-за вращения Земли",
+        "Конечная скорость всегда равна начальной"
+      ],
+      correct: 1
+    },
+    {
+      q: "8. При исследовании спортивной стрельбы (v_0 = 800 м/с, h = 1.5 м) какое влияние оказывает изменение угла прицеливания всего на 0.1°?",
+      options: [
+        "Практически не заметно на траектории",
+        "Приводит к существенному смещению точки попадания на сотни метров",
+        "Уменьшает начальную скорость пули",
+        "Заставляет пулю лететь по кругу"
+      ],
+      correct: 1
+    },
+    {
+      q: "9. Какова форма траектории движения тела, брошенного под углом к горизонту в однородном поле тяжести?",
+      options: [
+        "Прямая линия",
+        "Окружность",
+        "Парабола",
+        "Гипербола"
+      ],
+      correct: 2
+    },
+    {
+      q: "10. Какое ускорение действует на тело во время всего полета (при пренебрежении сопротивлением воздуха)?",
+      options: [
+        "Ускорение свободного падения g, направленное вертикально вниз",
+        "Ускорение, направленное вдоль траектории движения",
+        "Ускорение равно нулю",
+        "Ускорение постоянно меняет свое направление"
+      ],
+      correct: 0
+    }
+  ];
+
+  // Рендеринг вопросов
+  const container = document.getElementById('questionsContainer');
+  questions.forEach((item, index) => {
+    const qCard = document.createElement('div');
+    qCard.className = 'question-card';
+    
+    let optionsHTML = '';
+    item.options.forEach((opt, optIndex) => {
+      optionsHTML += `
+        <label class="option-label">
+          <input type="radio" name="q${index + 1}" value="${optIndex}" required>
+          ${opt}
+        </label>
+      `;
+    });
+
+    qCard.innerHTML = `
+      <div class="question-title">${item.q}</div>
+      <div class="options">${optionsHTML}</div>
+    `;
+    container.appendChild(qCard);
+  });
+
+  // Обработка отправки формы
+  document.getElementById('quizForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById('submitBtn');
+    const resultDiv = document.getElementById('result');
+    const userName = document.getElementById('userName').value.trim();
+
+    if (!userName) {
+      alert('Пожалуйста, укажите ваше имя.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправка результатов...';
+
+    // Подсчет баллов и сбор ответов
+    let score = 0;
+    const answersData = {};
+
+    questions.forEach((item, index) => {
+      const selected = document.querySelector(`input[name="q${index + 1}"]:checked`);
+      const val = selected ? parseInt(selected.value) : -1;
+      answersData[`q${index + 1}`] = selected ? item.options[val] : '';
+      if (val === item.correct) {
+        score++;
+      }
+    });
+
+    const payload = {
+      name: userName,
+      score: score,
+      total: questions.length,
+      answers: answersData
+    };
+
+    try {
+      // Использование no-cors режима для отправки данных в Google Apps Script
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      resultDiv.className = 'success';
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = `Тест успешно завершен, ${userName}!<br>Ваш результат: ${score} из ${questions.length}. Данные сохранены в таблицу.`;
+      
+      document.getElementById('quizForm').style.display = 'none';
+
+    } catch (err) {
+      console.error(err);
+      resultDiv.className = 'error';
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = 'Произошла ошибка при отправке результатов. Попробуйте ещё раз.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Завершить тест и отправить результаты';
+    }
+  });
+</script>
+
+</body>
+</html>
